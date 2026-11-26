@@ -1,0 +1,92 @@
+{
+  "info": {
+    "_postman_id": "a523f431-bab6-48cc-885e-42abfaa5dcbf",
+    "name": "GOV-TAX-PORTAL-IRP-MOCK",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "60365697",
+    "_collection_link": "https://go.postman.co/collection/60365697-a523f431-bab6-48cc-885e-42abfaa5dcbf?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "ClearInvoice",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{url}}/api/v1/einvoice/generate",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "einvoice",
+            "generate"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200_Clearance_Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/v1/einvoice/generate",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "einvoice",
+                "generate"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "text",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "body": "{\r\n  \"Status\": \"ACT\",\r\n  \"Irn\": \"a94f8c2e1b7d40928f1a3c5e7b9d0123456789abcdef0123456789abcdef1234\",\r\n  \"AckNo\": \"112600094827162\",\r\n  \"AckDt\": \"2026-11-21 17:15:00\",\r\n  \"SignedQRCode\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.sap_btp_clean_core_qr_signature\"\r\n}"
+        },
+        {
+          "name": "422_Validation_Error",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/v1/einvoice/generate",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "einvoice",
+                "generate"
+              ]
+            }
+          },
+          "status": "Unprocessable Content",
+          "code": 422,
+          "_postman_previewlanguage": "text",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "body": "{\r\n  \"Status\": \"ERR\",\r\n  \"ErrorCode\": \"2150\",\r\n  \"ErrorMessage\": \"Recipient Tax Registration Number (GSTIN/VAT) is missing or invalid for B2B e-Invoice clearance\"\r\n}"
+        }
+      ]
+    }
+  ]
+}

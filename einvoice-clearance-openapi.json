@@ -1,0 +1,586 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Clean-Core E-Invoicing & Tax Compliance Clearance API",
+    "description": "Read-only OData V4 API for querying S/4HANA e-invoice clearance logs, IRP acknowledgment details, and government tax portal validation errors.",
+    "version": "1.0.0"
+  },
+  "x-sap-api-type": "ODATAV4",
+  "x-odata-version": "4.01",
+  "x-sap-shortText": "Read-only e-Invoice clearance status and validation error lookup.",
+  "servers": [
+    {
+      "url": "https://w4w7n939-4004.inc1.devtunnels.ms/odata/v4/clearance"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Billing Document e-Invoice Clearance Record"
+    },
+    {
+      "name": "Government Tax Portal Validation Error Detail"
+    }
+  ],
+  "paths": {
+    "/BillingClearanceLogs": {
+      "get": {
+        "operationId": "getBillingClearanceLogs",
+        "summary": "Retrieves a list of billing clearance logs.",
+        "description": "Queries e-invoice clearance records. Supports OData $filter (e.g., clearanceStatus eq 'BLOCKED' or billingDocument eq '90000044') and $expand=errors.",
+        "tags": [
+          "Billing Document e-Invoice Clearance Record"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/top"
+          },
+          {
+            "$ref": "#/components/parameters/skip"
+          },
+          {
+            "$ref": "#/components/parameters/search"
+          },
+          {
+            "name": "$filter",
+            "description": "OData V4 filter expression (e.g., clearanceStatus eq 'BLOCKED' or billingDocument eq '90000044').",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/count"
+          },
+          {
+            "name": "$orderby",
+            "description": "Comma-separated property names with optional 'asc' or 'desc' (e.g., createdAt desc).",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$select",
+            "description": "Comma-separated list of properties to return.",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$expand",
+            "description": "Navigation property to expand inline. Use 'errors' to include government portal validation errors.",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved billing clearance logs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Collection of BillingClearanceLogs",
+                  "properties": {
+                    "@count": {
+                      "$ref": "#/components/schemas/count"
+                    },
+                    "value": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ClearanceService.BillingClearanceLogs"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/BillingClearanceLogs({ID})": {
+      "parameters": [
+        {
+          "description": "Clearance log UUID (ID)",
+          "in": "path",
+          "name": "ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "c1546add-3755-430e-8223-b6ad570312a8"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getBillingClearanceLogById",
+        "summary": "Retrieves a single billing clearance log by UUID.",
+        "description": "Fetches complete clearance details, IRN, acknowledgment metadata, and CPI message GUID for one billing clearance log.",
+        "tags": [
+          "Billing Document e-Invoice Clearance Record"
+        ],
+        "parameters": [
+          {
+            "name": "$select",
+            "description": "Comma-separated list of properties to return.",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$expand",
+            "description": "Use 'errors' to include child validation errors inline.",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved billing clearance log",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearanceService.BillingClearanceLogs"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/BillingClearanceLogs({ID})/errors": {
+      "parameters": [
+        {
+          "description": "Parent clearance log UUID (ID)",
+          "in": "path",
+          "name": "ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "706c8e5b-1dc8-4c3b-be93-806c38e1388f"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getBillingClearanceLogErrors",
+        "summary": "Retrieves government tax portal validation errors for a clearance log.",
+        "description": "Returns errorCode, errorField, errorMessage, and remediationHint for a blocked billing clearance log UUID.",
+        "tags": [
+          "Billing Document e-Invoice Clearance Record",
+          "Government Tax Portal Validation Error Detail"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/top"
+          },
+          {
+            "$ref": "#/components/parameters/skip"
+          },
+          {
+            "$ref": "#/components/parameters/search"
+          },
+          {
+            "name": "$filter",
+            "description": "OData V4 filter expression.",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/count"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Collection of TaxValidationErrors",
+                  "properties": {
+                    "@count": {
+                      "$ref": "#/components/schemas/count"
+                    },
+                    "value": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ClearanceService.TaxValidationErrors"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/TaxValidationErrors": {
+      "get": {
+        "operationId": "getTaxValidationErrors",
+        "summary": "Retrieves all government tax portal validation errors.",
+        "description": "Lists all recorded IRP validation errors across blocked invoices.",
+        "tags": [
+          "Government Tax Portal Validation Error Detail"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/top"
+          },
+          {
+            "$ref": "#/components/parameters/skip"
+          },
+          {
+            "$ref": "#/components/parameters/search"
+          },
+          {
+            "name": "$filter",
+            "description": "OData V4 filter expression (e.g., errorCode eq '2150').",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/count"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved tax validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Collection of TaxValidationErrors",
+                  "properties": {
+                    "@count": {
+                      "$ref": "#/components/schemas/count"
+                    },
+                    "value": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ClearanceService.TaxValidationErrors"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ClearanceService.BillingClearanceLogs": {
+        "title": "BillingClearanceLogs",
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid",
+            "example": "01234567-89ab-cdef-0123-456789abcdef"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "maxLength": 255,
+            "nullable": true
+          },
+          "modifiedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modifiedBy": {
+            "type": "string",
+            "maxLength": 255,
+            "nullable": true
+          },
+          "billingDocument": {
+            "type": "string",
+            "maxLength": 10
+          },
+          "companyCode": {
+            "type": "string",
+            "maxLength": 4,
+            "nullable": true
+          },
+          "soldToParty": {
+            "type": "string",
+            "maxLength": 10,
+            "nullable": true
+          },
+          "customerGSTIN": {
+            "type": "string",
+            "maxLength": 15,
+            "nullable": true
+          },
+          "billingDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "netAmount": {
+            "anyOf": [
+              {
+                "type": "number",
+                "format": "decimal"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "nullable": true
+          },
+          "taxAmount": {
+            "anyOf": [
+              {
+                "type": "number",
+                "format": "decimal"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "nullable": true
+          },
+          "grossAmount": {
+            "anyOf": [
+              {
+                "type": "number",
+                "format": "decimal"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "maxLength": 3,
+            "nullable": true
+          },
+          "clearanceStatus": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true
+          },
+          "statusCriticality": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "httpStatusCode": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "irn": {
+            "type": "string",
+            "maxLength": 64,
+            "nullable": true
+          },
+          "ackNo": {
+            "type": "string",
+            "maxLength": 30,
+            "nullable": true
+          },
+          "ackDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "signedQRCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "cpiMessageGuid": {
+            "type": "string",
+            "maxLength": 64,
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClearanceService.TaxValidationErrors"
+            }
+          },
+          "errors@count": {
+            "$ref": "#/components/schemas/count"
+          }
+        }
+      },
+      "ClearanceService.TaxValidationErrors": {
+        "title": "TaxValidationErrors",
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "maxLength": 255,
+            "nullable": true
+          },
+          "modifiedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modifiedBy": {
+            "type": "string",
+            "maxLength": 255,
+            "nullable": true
+          },
+          "parent_ID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "errorCode": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true
+          },
+          "errorField": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "remediationHint": {
+            "type": "string",
+            "maxLength": 300,
+            "nullable": true
+          }
+        }
+      },
+      "count": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "description": "The number of entities in the collection."
+      },
+      "error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "top": {
+        "name": "$top",
+        "in": "query",
+        "description": "Show only the first n items.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "example": 50
+      },
+      "skip": {
+        "name": "$skip",
+        "in": "query",
+        "description": "Skip the first n items.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "count": {
+        "name": "$count",
+        "in": "query",
+        "description": "Include total count of items.",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      "search": {
+        "name": "$search",
+        "in": "query",
+        "description": "Free-text search phrase.",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "error": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/error"
+            }
+          }
+        }
+      }
+    }
+  }
+}

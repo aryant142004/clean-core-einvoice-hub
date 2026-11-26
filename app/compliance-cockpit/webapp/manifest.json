@@ -1,0 +1,107 @@
+{
+  "_version": "1.58.0",
+  "sap.app": {
+    "id": "sap.btp.einvoice.cockpit",
+    "type": "application",
+    "title": "Clean-Core e-Invoice Compliance Cockpit",
+    "description": "Order-to-Cash Tax Clearance Monitor",
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/clearance/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {}
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.core": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "models": {
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true
+      },
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "BillingClearanceLogsList",
+          "target": "BillingClearanceLogsList"
+        },
+        {
+          "pattern": "BillingClearanceLogs({key}):?query:",
+          "name": "BillingClearanceLogsObjectPage",
+          "target": "BillingClearanceLogsObjectPage"
+        }
+      ],
+      "targets": {
+        "BillingClearanceLogsList": {
+          "type": "Component",
+          "id": "BillingClearanceLogsList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/BillingClearanceLogs",
+              "initialLoad": "Enabled",
+              "variantManagement": "None",
+              "navigation": {
+                "BillingClearanceLogs": {
+                  "detail": {
+                    "route": "BillingClearanceLogsObjectPage"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "BillingClearanceLogsObjectPage": {
+          "type": "Component",
+          "id": "BillingClearanceLogsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "contextPath": "/BillingClearanceLogs"
+            }
+          }
+        }
+      }
+    }
+  }
+}

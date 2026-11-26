@@ -1,0 +1,3 @@
+ID;parent_ID;errorCode;errorField;errorMessage;remediationHint
+22222222-2222-2222-2222-222222222201;11111111-1111-1111-1111-111111111102;IRP-422-GST;CustomerGSTIN;Invalid Recipient GSTIN checksum or inactive registration status on IRP portal.;Verify Customer Master Tax Number 3 in S/4HANA Business Partner and click Re-Submit.
+22222222-2222-2222-2222-222222222202;11111111-1111-1111-1111-111111111103;IRP-422-HSN;MaterialHSN;Missing or invalid 8-digit HSN/SAC tariff code for line item 000010.;Maintain valid HSN code in S/4HANA Material Master Foreign Trade view and Re-Submit.
