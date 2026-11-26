@@ -15,7 +15,8 @@ module.exports = cds.service.impl(async function () {
   });
 
   this.on('reSubmit', BillingClearanceLogs, async (req) => {
-    const { ID } = req.params[0];
+    const param = req.params[0];
+    const ID = typeof param === 'object' ? param.ID : param;
     const record = await SELECT.one.from(BillingClearanceLogs).where({ ID });
 
     if (!record) return req.reject(404, `Clearance log ${ID} not found.`);
