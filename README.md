@@ -6,32 +6,21 @@ A side-by-side **SAP BTP Clean-Core** extension for SAP S/4HANA Cloud Order-to-C
 
 ## End-to-End Architecture
 
-```text
-+-----------------------------------+
-|      SAP S/4HANA Cloud (O2C)      |
-|    API_BILLING_DOCUMENT_SRV       |
-+-----------------+-----------------+
-                  | Outbound Billing Payload (OData / REST)
-                  v
-+-----------------------------------+      POST /api/v1/einvoice/generate      +-----------------------------------+
-|      SAP Integration Suite        | ---------------------------------------> |   Government Tax Portal / IRP     |
-|  IF_S4_To_IRP_EInvoice_Clearance  | <--------------------------------------- |  (Postman Mock: 200 OK / 422 Err) |
-+-----------------+-----------------+   200 OK (IRN, AckNo, QR) / 422 Errors   +-----------------------------------+
-                  |
-                  | OData V4 Deep Insert (OAuth 2.0 Client Credentials)
-                  v
-+-----------------------------------+
-|     SAP CAP Clearance Service     |
-|   /odata/v4/clearance (Node.js)   |
-+--------+-----------------+--------+
-         |                 |
-         | Read / Action   | Read-Only OpenAPI V4 (GET-only via BTP Destination)
-         v                 v
-+-----------------+ +-----------------------------------+
-|  SAP Fiori      | |  SAP Build Actions & Joule Studio |
-|  Elements UI    | |  E-Invoice Compliance Assistant   |
-| (Clearing App)  | |  (Zero-Mutation AI Copilot Layer) |
-+-----------------+ +-----------------------------------+
+```mermaid
+flowchart TD
+    S4["<b>SAP S/4HANA Cloud (O2C)</b><br/>API_BILLING_DOCUMENT_SRV"]
+    CPI["<b>SAP Integration Suite</b><br/>IF_S4_To_IRP_EInvoice_Clearance"]
+    IRP["<b>Government Tax Portal / IRP</b><br/>Postman Mock (200 OK / 422 Error)"]
+    CAP["<b>SAP CAP Clearance Service</b><br/>/odata/v4/clearance (Node.js)"]
+    FIORI["<b>SAP Fiori Elements UI</b><br/>E-Invoice Clearing Cockpit"]
+    JOULE["<b>SAP Build Actions & Joule Studio</b><br/>Zero-Mutation Compliance Assistant"]
+
+    S4 -->|"Outbound Billing Payload (OData / REST)"| CPI
+    CPI -->|"POST /api/v1/einvoice/generate"| IRP
+    IRP -->|"200 OK (IRN, AckNo, QR) / 422 Errors"| CPI
+    CPI -->|"OData V4 Deep Insert (OAuth 2.0)"| CAP
+    CAP -->|"Read & Re-Submit Action"| FIORI
+    CAP -->|"Read-Only OpenAPI V4 (GET-only Destination)"| JOULE
 ```
 
 ---
