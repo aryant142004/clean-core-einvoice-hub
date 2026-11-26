@@ -25,6 +25,36 @@ flowchart TD
 
 ---
 
+## Live Execution & UI Walkthrough
+
+### 1. SAP CAP OData V4 Service & Fiori Elements Clearing Cockpit
+CAP runtime endpoints (`/odata/v4/clearance`) serving the Fiori Elements List Report (`CLEARED` vs. `BLOCKED` billing documents with one-click `Re-Submit for Clearance`), Object Page details (`90000044`), and deep-inserted field-level `TaxValidationErrors`:
+
+![SAP CAP OData V4 Service Index](docs/screenshots/01-cap-odata-service-index.png)
+
+![Fiori Elements Clearing Cockpit List Report](docs/screenshots/02-fiori-clearing-cockpit-list.png)
+
+![Fiori Elements Blocked Invoice Object Page](docs/screenshots/03-fiori-blocked-invoice-object-page.png)
+
+![Fiori Elements Tax Validation Errors](docs/screenshots/04-fiori-tax-validation-errors.png)
+
+### 2. SAP Integration Suite iFlow & Exception Subprocess
+Deployed and running `IF_S4_To_IRP_EInvoice_Clearance` orchestration routing `200 OK` clearances and intercepting HTTP `422` errors via `Exception Subprocess 1`:
+
+![SAP Integration Suite iFlow](docs/screenshots/05-cpi-iflow-orchestration.png)
+
+### 3. Deterministic Government IRP Mock (Postman)
+Simulated IRP endpoint (`POST {{url}}/api/v1/einvoice/generate`) modeling `200_Clearance_Success` (IRN, AckNo, Signed QR) and `422_Validation_Error` payloads:
+
+![Postman IRP Mock Responses](docs/screenshots/06-postman-irp-mock-responses.png)
+
+### 4. Governed Read-Only SAP Build Actions (`v1.0.0`)
+Published SAP Build Action Library exposing only four sanitized OData V4 `GET` endpoints with a verified `200: OK` response payload for the Joule Studio Compliance Assistant:
+
+![SAP Build Actions 200 OK Response](docs/screenshots/07-sap-build-actions-200-ok.png)
+
+---
+
 ## Core Capabilities & Clean-Core Design
 
 ### 1. Event-Driven Integration Orchestration (`integration-suite/`)
@@ -57,6 +87,8 @@ clean-core-einvoice-hub/
 │   └── compliance-cockpit/                                                   # SAP Fiori Elements List Report & Object Page UI
 ├── db/                                                                       # SAP CAP CDS domain schema & sample seed data
 ├── srv/                                                                      # OData V4 service definitions & custom handlers
+├── docs/
+│   └── screenshots/                                                          # End-to-end execution & UI screenshots
 ├── integration-suite/
 │   └── IF_S4_To_IRP_EInvoice_Clearance.zip                                   # Deployable SAP Cloud Integration iFlow
 ├── postman/
