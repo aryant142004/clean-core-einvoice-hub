@@ -1,5 +1,8 @@
 # Clean-Core E-Invoicing & Tax Compliance Clearing Hub (SAP S/4HANA Order-to-Cash Extension)
 
+[![Watch Live End-to-End Demo on LinkedIn](https://img.shields.io/badge/LinkedIn-Watch_Live_Demo_Video-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://lnkd.in/p/gaYBkGd8)
+
+
 A side-by-side **SAP BTP Clean-Core** extension for SAP S/4HANA Cloud Order-to-Cash (O2C) billing compliance. Instead of modifying core S/4HANA billing user exits (`RV60AFZZ`), this architecture decouples government Invoice Registration Portal (IRP) clearance, tax validation error handling, operational exception resolution, and AI-assisted compliance auditing onto SAP BTP.
 
 ---
